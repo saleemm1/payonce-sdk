@@ -74,6 +74,34 @@ const invoice = PayOnce.createInvoice({
   secretKey: "MY_SUPER_SECRET_KEY" // Keep this safe!
 });
 ```
+---
+
+## 🛒 Real World Integration Example
+
+Here is how you would use PayOnce in a real **Express.js** or **Next.js** checkout endpoint. 
+Instead of hardcoding the price, you fetch it from your database.
+
+```javascript
+// Example: POST /api/checkout
+app.post('/api/checkout', async (req, res) => {
+  const { cartId, userWallet } = req.body;
+
+  // 1. Fetch cart details from YOUR database
+  const cart = await database.getCart(cartId); 
+  // e.g., cart.total = 45.50
+
+  // 2. Generate the dynamic link
+  const invoice = PayOnce.createInvoice({
+    wallet: process.env.MERCHANT_WALLET, // Your receiving address
+    price: cart.total,                   // 🟢 Dynamic Price from DB
+    product: `Order #${cartId}`,         // 🟢 Dynamic Product Name
+    secretKey: process.env.PAYONCE_SECRET
+  });
+
+  // 3. Return the link to the frontend
+  res.json({ paymentUrl: invoice.url });
+});
+
 
 ---
 
