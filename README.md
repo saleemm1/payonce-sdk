@@ -2,7 +2,7 @@
 
 The official Node.js library for integrating **PayOnce Protocol** (Bitcoin Cash payments).
 
-## Installation
+## 📦 Installation
 
 ```bash
-npm install github.com/saleemm1/payonce-sdk.git
+npm install git+[https://github.com/saleemm1/payonce-sdk.git](https://github.com/saleemm1/payonce-sdk.git)
