@@ -101,7 +101,7 @@ app.post('/api/checkout', async (req, res) => {
   // 3. Return the link to the frontend
   res.json({ paymentUrl: invoice.url });
 });
-
+```
 
 ---
 
