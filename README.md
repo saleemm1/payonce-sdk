@@ -1,8 +1,8 @@
-# PayOnce SDK 🟢
+# PayOnce SDK 
 
 The official Node.js library for integrating **PayOnce Protocol** (Bitcoin Cash payments).
 
-## 📦 Installation
+##  Installation
 
 ```bash
 npm install git+https://github.com/saleemm1/payonce-sdk.git
@@ -10,7 +10,7 @@ npm install git+https://github.com/saleemm1/payonce-sdk.git
 
 ---
 
-### 🚀 Quick Start
+###  Quick Start
 Generate a secure payment link dynamically on your server (Node.js, Next.js API, Express, etc.).
 
 ```javascript
@@ -30,7 +30,7 @@ console.log("Payment Link:", invoice.url);
 ```
 ---
 
-### 🛠 API Reference
+###  API Reference
 Generates a cryptographically signed payment URL.
 
 | Parameter  | Type   | Required | Description |
@@ -53,7 +53,7 @@ An object containing:
 
 ---
 
-### 🔒 Security: Anti-Tamper Protection
+###  Security: Anti-Tamper Protection
 PayOnce runs purely on the client-side (Stateless), which is great for decentralization but usually risky for pricing integrity.
 
 To prevent malicious users from modifying the price in the URL (e.g., changing $100 to $1), use the secretKey parameter.
@@ -76,7 +76,7 @@ const invoice = PayOnce.createInvoice({
 ```
 ---
 
-## 🛒 Real World Integration Example
+##  Real World Integration Example
 
 Here is how you would use PayOnce in a real **Express.js** or **Next.js** checkout endpoint. 
 Instead of hardcoding the price, you fetch it from your database.
@@ -93,8 +93,8 @@ app.post('/api/checkout', async (req, res) => {
   // 2. Generate the dynamic link
   const invoice = PayOnce.createInvoice({
     wallet: process.env.MERCHANT_WALLET, // Your receiving address
-    price: cart.total,                   // 🟢 Dynamic Price from DB
-    product: `Order #${cartId}`,         // 🟢 Dynamic Product Name
+    price: cart.total,                   //  Dynamic Price from DB
+    product: `Order #${cartId}`,         //  Dynamic Product Name
     secretKey: process.env.PAYONCE_SECRET
   });
 
@@ -105,7 +105,7 @@ app.post('/api/checkout', async (req, res) => {
 
 ---
 
-### ⚡ Why use this SDK?
+###  Why use this SDK?
 - **Dynamic Pricing:** Great for e-commerce carts where the total price changes per user.
 
 - **Scale:** Generate millions of unique invoices without managing a database.
