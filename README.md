@@ -113,3 +113,7 @@ app.post('/api/checkout', async (req, res) => {
 - **Zero Custody:** Funds go directly from the user to your wallet. No middleman.
 
 - **Zero-Conf:** Optimized for instant settlement on Bitcoin Cash.
+
+
+<img width="1919" height="1079" alt="Screenshot 2026-01-31 063709" src="https://github.com/user-attachments/assets/add0b8be-711b-4405-b3df-c5ecdc8372dc" />
+
