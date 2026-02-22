@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 
 class PayOnce {
-  static createInvoice({ wallet, price, product, secretKey }) {
+  static async createInvoice({ wallet, price, product, secretKey }) {
     if (!wallet || !price) {
       throw new Error("PayOnce SDK Error: 'wallet' and 'price' are required.");
     }
@@ -23,16 +23,26 @@ class PayOnce {
       payload.sec = signature;
     }
 
-    const jsonString = JSON.stringify(payload);
-    const encodedId = Buffer.from(jsonString).toString('base64');
+    const response = await fetch('https://payonce-cash.vercel.app/api/upload-json', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+    
+    const data = await response.json();
+    
+    if (!data.cid) {
+        throw new Error("PayOnce SDK Error: Failed to generate IPFS CID.");
+    }
 
     const baseUrl = "https://payonce-cash.vercel.app/unlock";
-    const finalUrl = `${baseUrl}?id=${encodedId}`;
+    const finalUrl = `${baseUrl}?cid=${data.cid}`;
 
     return {
       url: finalUrl,
       payload: payload,
-      signature: payload.sec || null
+      signature: payload.sec || null,
+      cid: data.cid
     };
   }
 }
