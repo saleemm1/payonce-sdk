@@ -10,23 +10,27 @@ npm install git+https://github.com/saleemm1/payonce-sdk.git
 
 ---
 
-###  Quick Start
-Generate a secure payment link dynamically on your server (Node.js, Next.js API, Express, etc.).
+### Quick Start
+Generate a secure, IPFS-hosted payment link dynamically on your server (Node.js, Next.js API, Express, etc.).
 
 ```javascript
 const { PayOnce } = require('payonce-sdk');
 
-// 1. Create the invoice payload
-const invoice = PayOnce.createInvoice({
-  wallet: "bitcoincash:qrz...",   // Your BCH Wallet Address
-  price: 25.00,                   // Price in USD
-  product: "Premium E-Book",      // Product Name
-  secretKey: process.env.SECRET   // (Optional) For Tamper Protection
-});
+async function generatePayment() {
+  // 1. Create the invoice payload (Uploads stateless JSON to IPFS)
+  const invoice = await PayOnce.createInvoice({
+    wallet: "bitcoincash:qrz...",   // Your BCH Wallet Address
+    price: 25.00,                   // Price in USD
+    product: "Premium E-Book",      // Product Name
+    secretKey: process.env.SECRET   // (Optional) For Tamper Protection
+  });
 
-// 2. Redirect the user or send the link to frontend
-console.log("Payment Link:", invoice.url);
-// Output: [https://payonce-cash.vercel.app/unlock?id=eyJ3IjoiYml0Y29](https://payonce-cash.vercel.app/unlock?id=eyJ3IjoiYml0Y29)...
+  // 2. Redirect the user or send the link to frontend
+  console.log("Payment Link:", invoice.url);
+  // Output: [https://payonce-cash.vercel.app/unlock?cid=Qm](https://payonce-cash.vercel.app/unlock?cid=Qm)...
+}
+
+generatePayment();
 ```
 ---
 
@@ -42,15 +46,14 @@ Generates a cryptographically signed payment URL.
 
 ---
 
-## Returns:
+## Returns
+
 An object containing:
 
-- **url (string):** The full payment link to redirect the user to.
-
-- **payload** (object): The raw data object used for generation.
-
-- **signature (string | null):** The HMAC signature (if secretKey was provided).
-
+- **url** (`string`): The full payment link to redirect the user to.
+- **cid** (`string`): The unique IPFS Content Identifier hash generated for this payload.
+- **payload** (`object`): The raw data object used for generation.
+- **signature** (`string | null`): The HMAC signature (if `secretKey` was provided).
 ---
 
 ###  Security: Anti-Tamper Protection
@@ -67,7 +70,7 @@ To prevent malicious users from modifying the price in the URL (e.g., changing $
 
 ```javascript
 // Example with Security
-const invoice = PayOnce.createInvoice({
+const invoice = await PayOnce.createInvoice({
   wallet: "bitcoincash:qp...",
   price: 100,
   product: "Developer License",
@@ -86,20 +89,24 @@ Instead of hardcoding the price, you fetch it from your database.
 app.post('/api/checkout', async (req, res) => {
   const { cartId, userWallet } = req.body;
 
-  // 1. Fetch cart details from YOUR database
-  const cart = await database.getCart(cartId); 
-  // e.g., cart.total = 45.50
+  try {
+    // 1. Fetch cart details from YOUR database
+    const cart = await database.getCart(cartId); 
+    // e.g., cart.total = 45.50
 
-  // 2. Generate the dynamic link
-  const invoice = PayOnce.createInvoice({
-    wallet: process.env.MERCHANT_WALLET, // Your receiving address
-    price: cart.total,                   //  Dynamic Price from DB
-    product: `Order #${cartId}`,         //  Dynamic Product Name
-    secretKey: process.env.PAYONCE_SECRET
-  });
+    // 2. Generate the dynamic link (Async)
+    const invoice = await PayOnce.createInvoice({
+      wallet: process.env.MERCHANT_WALLET, // Your receiving address
+      price: cart.total,                   //  Dynamic Price from DB
+      product: `Order #${cartId}`,         //  Dynamic Product Name
+      secretKey: process.env.PAYONCE_SECRET
+    });
 
-  // 3. Return the link to the frontend
-  res.json({ paymentUrl: invoice.url });
+    // 3. Return the link to the frontend
+    res.json({ paymentUrl: invoice.url });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to generate link" });
+  }
 });
 ```
 
